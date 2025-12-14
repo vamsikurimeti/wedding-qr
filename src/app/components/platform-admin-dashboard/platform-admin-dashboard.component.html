@@ -1,0 +1,77 @@
+<app-layout>
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <h1>Platform Admin Dashboard</h1>
+      <button 
+        *ngIf="canCreateEvents"
+        class="btn-primary" 
+        routerLink="/events/create"
+      >
+        Create Event
+      </button>
+      <div *ngIf="!canCreateEvents && user" class="info-message">
+        <p>You need <strong>Platform Admin</strong> privileges to create events. Please contact a super admin to upgrade your account.</p>
+      </div>
+    </div>
+
+    <div class="stats-grid" *ngIf="user && user.role === 'platform_admin'">
+      <div class="stat-card">
+        <div class="stat-label">Storage Used</div>
+        <div class="stat-value">{{ getStorageUsed().toFixed(2) }} GB</div>
+        <div class="stat-progress">
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              [style.width.%]="getStoragePercentage()"
+            ></div>
+          </div>
+          <span class="stat-limit">{{ getStorageLimit() }} GB limit</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Events</div>
+        <div class="stat-value">{{ events.length }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active Events</div>
+        <div class="stat-value">{{ getActiveEventsCount() }}</div>
+      </div>
+    </div>
+
+    <div class="events-section">
+      <h2>Your Events</h2>
+
+      <div *ngIf="isLoading" class="loading">Loading events...</div>
+
+      <div *ngIf="!isLoading && events.length === 0" class="empty-state">
+        <p>No events yet. Create your first event to get started!</p>
+      </div>
+
+      <div *ngIf="!isLoading && events.length > 0" class="events-grid">
+        <div *ngFor="let event of events" class="event-card">
+          <div class="event-header">
+            <h3>{{ event.name }}</h3>
+            <span class="badge" [class.badge-active]="event.isActive">
+              {{ event.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+          <p class="event-description" *ngIf="event.description">{{ event.description }}</p>
+          <div class="event-stats">
+            <div class="stat-item">
+              <span class="stat-label">QR Codes:</span>
+              <span class="stat-value">{{ event.qrCodes.length || 0 }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Storage:</span>
+              <span class="stat-value">{{ event.storageUsed.toFixed(2) }} GB</span>
+            </div>
+          </div>
+          <div class="event-actions">
+            <button class="btn-secondary" [routerLink]="['/events', event.id]">View Details</button>
+            <button class="btn-danger" (click)="deleteEvent(event.id)">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-layout>

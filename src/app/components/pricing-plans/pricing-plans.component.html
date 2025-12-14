@@ -1,0 +1,84 @@
+<app-layout>
+  <div class="pricing-container">
+    <div class="header">
+      <h1>Pricing Plans Management</h1>
+      <button class="btn-primary" (click)="openCreateForm()">Create New Plan</button>
+    </div>
+
+    <div *ngIf="isLoading" class="loading">Loading plans...</div>
+
+    <div *ngIf="!isLoading" class="plans-list">
+      <div *ngFor="let plan of plans" class="plan-card">
+        <div class="plan-header">
+          <h3>{{ plan.name }}</h3>
+          <span class="badge" [class.badge-active]="plan.isActive">
+            {{ plan.isActive ? 'Active' : 'Inactive' }}
+          </span>
+        </div>
+        <p class="plan-description" *ngIf="plan.description">{{ plan.description }}</p>
+        <div class="plan-details">
+          <div class="detail-item">
+            <span class="label">Storage Limit:</span>
+            <span class="value">{{ plan.storageLimit }} GB</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Price:</span>
+            <span class="value">{{ plan.currency }} {{ plan.price }}</span>
+          </div>
+        </div>
+        <div class="plan-actions">
+          <button class="btn-edit" (click)="openEditForm(plan)">Edit</button>
+          <button class="btn-delete" (click)="deletePlan(plan.id)">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create/Edit Form Modal -->
+    <div *ngIf="showForm" class="modal-overlay" (click)="closeForm()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>{{ editingPlan ? 'Edit' : 'Create' }} Pricing Plan</h2>
+          <button class="btn-close" (click)="closeForm()">&times;</button>
+        </div>
+        <form [formGroup]="planForm" (ngSubmit)="onSubmit()" class="plan-form">
+          <div class="form-group">
+            <label for="name">Plan Name *</label>
+            <input type="text" id="name" formControlName="name" />
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" formControlName="description" rows="3"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="storageLimit">Storage Limit (GB) *</label>
+              <input type="number" id="storageLimit" formControlName="storageLimit" min="1" />
+            </div>
+            <div class="form-group">
+              <label for="price">Price *</label>
+              <input type="number" id="price" formControlName="price" min="0" step="0.01" />
+            </div>
+            <div class="form-group">
+              <label for="currency">Currency *</label>
+              <select id="currency" formControlName="currency">
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="isActive" />
+              <span>Active</span>
+            </label>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" (click)="closeForm()">Cancel</button>
+            <button type="submit" class="btn-primary" [disabled]="planForm.invalid">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</app-layout>

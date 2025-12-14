@@ -1,0 +1,103 @@
+<div class="qr-creation-container">
+  <div class="qr-creation-card">
+    <div class="header">
+      <h1>Create QR Code</h1>
+      <p>Configure the rules for this QR code</p>
+    </div>
+
+    <form [formGroup]="qrForm" (ngSubmit)="onSubmit()" class="qr-form">
+      <div class="form-group">
+        <label for="name">QR Code Name *</label>
+        <input
+          type="text"
+          id="name"
+          formControlName="name"
+          placeholder="e.g., Main Entrance, Reception Table"
+          [class.error]="qrForm.get('name')?.invalid && qrForm.get('name')?.touched"
+        />
+        <span class="error-message" *ngIf="qrForm.get('name')?.invalid && qrForm.get('name')?.touched">
+          Name is required
+        </span>
+      </div>
+
+      <div class="rules-section">
+        <h3>Access Rules</h3>
+
+        <div class="rule-item">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              formControlName="anyoneCanViewGallery"
+            />
+            <span>Anyone can view gallery</span>
+          </label>
+        </div>
+
+        <div class="rule-item">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              formControlName="anyoneCanUpload"
+            />
+            <span>Anyone can upload</span>
+          </label>
+        </div>
+
+        <div class="rule-item">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              formControlName="uploadRequiresApproval"
+            />
+            <span>Upload requires approval</span>
+          </label>
+        </div>
+
+        <div class="rule-item">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              formControlName="nameRequired"
+            />
+            <span>Name required for upload</span>
+          </label>
+        </div>
+
+        <div class="rule-item">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              formControlName="downloadAllowed"
+            />
+            <span>Download allowed</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="phoneRequired">Phone Number Requirement</label>
+          <select id="phoneRequired" formControlName="phoneRequired">
+            <option value="none">Not Required</option>
+            <option value="optional">Optional</option>
+            <option value="mandatory">Mandatory</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="cancel()">Cancel</button>
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="qrForm.invalid || isLoading"
+        >
+          <span *ngIf="!isLoading">Create QR Code</span>
+          <span *ngIf="isLoading">Creating...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

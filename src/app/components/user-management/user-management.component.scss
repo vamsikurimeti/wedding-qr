@@ -1,0 +1,126 @@
+.user-management-container {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 2rem;
+  }
+}
+
+.users-table-container {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    background: #f7fafc;
+
+    th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: #4a5568;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+    }
+  }
+
+  tbody {
+    tr {
+      border-top: 1px solid #e2e8f0;
+
+      &:hover {
+        background: #f7fafc;
+      }
+
+      td {
+        padding: 1rem;
+        color: #2d3748;
+      }
+    }
+  }
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+
+  &.badge-active {
+    background: #c6f6d5;
+    color: #22543d;
+  }
+
+  &.badge-inactive {
+    background: #fed7d7;
+    color: #742a2a;
+  }
+
+  &.badge-super_admin {
+    background: #fed7d7;
+    color: #742a2a;
+  }
+
+  &.badge-platform_admin {
+    background: #bee3f8;
+    color: #2c5282;
+  }
+
+  &.badge-event_admin {
+    background: #fefcbf;
+    color: #744210;
+  }
+}
+
+.btn-toggle {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &.btn-disable {
+    background: #fed7d7;
+    color: #742a2a;
+
+    &:hover {
+      background: #fc8181;
+    }
+  }
+
+  &.btn-enable {
+    background: #c6f6d5;
+    color: #22543d;
+
+    &:hover {
+      background: #9ae6b4;
+    }
+  }
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #718096;
+}
+
+@media (max-width: 768px) {
+  .users-table-container {
+    overflow-x: auto;
+  }
+}

@@ -1,0 +1,102 @@
+<app-layout>
+  <div class="dashboard-container">
+    <h1>Super Admin Dashboard</h1>
+
+    <div class="tabs">
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'users'"
+        (click)="setActiveTab('users')"
+      >
+        Users
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'pricing'"
+        (click)="setActiveTab('pricing')"
+      >
+        Pricing Plans
+      </button>
+    </div>
+
+    <div class="tab-content">
+      <!-- Users Tab -->
+      <div *ngIf="activeTab === 'users'" class="users-section">
+        <div class="section-header">
+          <h2>All Users</h2>
+        </div>
+
+        <div *ngIf="isLoading" class="loading">Loading users...</div>
+
+        <div *ngIf="!isLoading" class="users-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of users">
+                <td>{{ user.email }}</td>
+                <td>
+                  <span class="badge badge-{{ user.role }}">{{ user.role }}</span>
+                </td>
+                <td>
+                  <span class="badge" [class.badge-active]="user.isActive" [class.badge-inactive]="!user.isActive">
+                    {{ user.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+                <td>{{ user.createdAt | date:'short' }}</td>
+                <td>
+                  <button
+                    class="btn-toggle"
+                    [class.btn-disable]="user.isActive"
+                    [class.btn-enable]="!user.isActive"
+                    (click)="toggleUserStatus(user)"
+                  >
+                    {{ user.isActive ? 'Disable' : 'Enable' }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pricing Plans Tab -->
+      <div *ngIf="activeTab === 'pricing'" class="pricing-section">
+        <div class="section-header">
+          <h2>Pricing Plans</h2>
+          <button class="btn-primary" routerLink="/super-admin/pricing-plans">Manage Plans</button>
+        </div>
+
+        <div class="plans-grid">
+          <div *ngFor="let plan of pricingPlans" class="plan-card">
+            <h3>{{ plan.name }}</h3>
+            <p class="plan-description">{{ plan.description }}</p>
+            <div class="plan-details">
+              <div class="detail-item">
+                <span class="label">Storage:</span>
+                <span class="value">{{ plan.storageLimit }} GB</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Price:</span>
+                <span class="value">{{ plan.currency }} {{ plan.price }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Status:</span>
+                <span class="badge" [class.badge-active]="plan.isActive">
+                  {{ plan.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-layout>

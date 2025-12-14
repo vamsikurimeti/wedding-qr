@@ -1,0 +1,104 @@
+<div class="upload-container">
+  <div class="upload-card">
+    <h2>Upload Photos & Videos</h2>
+    <p class="upload-description">Select files from your device to upload</p>
+
+    <form [formGroup]="uploadForm" class="upload-form">
+      <div class="form-group" *ngIf="rules.nameRequired">
+        <label for="name">Your Name *</label>
+        <input
+          type="text"
+          id="name"
+          formControlName="name"
+          placeholder="Enter your name"
+          [class.error]="uploadForm.get('name')?.invalid && uploadForm.get('name')?.touched"
+        />
+        <span class="error-message" *ngIf="uploadForm.get('name')?.invalid && uploadForm.get('name')?.touched">
+          Name is required
+        </span>
+      </div>
+
+      <div class="form-group" *ngIf="rules.phoneRequired !== 'none'">
+        <label for="phone">
+          Phone Number
+          <span *ngIf="rules.phoneRequired === 'mandatory'">*</span>
+        </label>
+        <input
+          type="tel"
+          id="phone"
+          formControlName="phone"
+          placeholder="Enter your phone number"
+          [class.error]="uploadForm.get('phone')?.invalid && uploadForm.get('phone')?.touched"
+        />
+        <span class="error-message" *ngIf="uploadForm.get('phone')?.invalid && uploadForm.get('phone')?.touched">
+          Phone number is required
+        </span>
+      </div>
+
+      <div class="file-upload-area">
+        <input
+          type="file"
+          id="fileInput"
+          multiple
+          accept="image/*,video/*"
+          (change)="onFileSelected($event)"
+          style="display: none"
+        />
+        <label for="fileInput" class="file-upload-label">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <span>Click to select files</span>
+          <span class="file-hint">Photos and videos supported</span>
+        </label>
+      </div>
+
+      <div *ngIf="selectedFiles.length > 0" class="selected-files">
+        <h3>Selected Files ({{ selectedFiles.length }})</h3>
+        <div class="file-list">
+          <div *ngFor="let file of selectedFiles; let i = index" class="file-item">
+            <div class="file-info">
+              <span class="file-name">{{ file.name }}</span>
+              <span class="file-size">({{ (file.size / 1024 / 1024).toFixed(2) }} MB)</span>
+            </div>
+            <div class="file-actions">
+              <div *ngIf="getUploadStatus(file.name) === 'uploading'" class="upload-progress">
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="getProgress(file.name)"></div>
+                </div>
+                <span>{{ getProgress(file.name) | number:'1.0-0' }}%</span>
+              </div>
+              <span *ngIf="getUploadStatus(file.name) === 'success'" class="status-success">✓ Uploaded</span>
+              <span *ngIf="getUploadStatus(file.name) === 'error'" class="status-error">✗ Error</span>
+              <button
+                *ngIf="getUploadStatus(file.name) !== 'uploading'"
+                class="btn-remove"
+                (click)="removeFile(i)"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="upload-actions">
+        <button
+          type="button"
+          class="btn-primary"
+          (click)="uploadFiles()"
+          [disabled]="selectedFiles.length === 0 || uploadForm.invalid || isUploading"
+        >
+          <span *ngIf="!isUploading">Upload Files</span>
+          <span *ngIf="isUploading">Uploading...</span>
+        </button>
+      </div>
+
+      <div *ngIf="rules.uploadRequiresApproval" class="approval-notice">
+        <p>⚠️ Your uploads will require approval before being visible in the gallery.</p>
+      </div>
+    </form>
+  </div>
+</div>

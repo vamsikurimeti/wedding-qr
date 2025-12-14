@@ -1,0 +1,20 @@
+<div class="layout-container">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <h2>Wedding QR Platform</h2>
+    </div>
+    <div class="navbar-menu">
+      <a routerLink="/super-admin" *ngIf="isSuperAdmin" routerLinkActive="active">Super Admin</a>
+      <a routerLink="/platform-admin" *ngIf="isPlatformAdmin" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/events" *ngIf="isPlatformAdmin || isEventAdmin" routerLinkActive="active">Events</a>
+      <div class="user-menu" *ngIf="currentUser$ | async as user">
+        <span class="user-name">{{ user.displayName || user.email }}</span>
+        <button class="btn-logout" (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <ng-content></ng-content>
+  </main>
+</div>

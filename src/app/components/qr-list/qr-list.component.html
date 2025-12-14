@@ -1,0 +1,50 @@
+<div class="qr-list-container">
+  <div *ngIf="qrCodes.length === 0" class="empty-state">
+    <p>No QR codes created yet. Create one to get started!</p>
+  </div>
+
+  <div *ngIf="qrCodes.length > 0" class="qr-codes-grid">
+    <div *ngFor="let qrCode of qrCodes" class="qr-code-card">
+      <div class="qr-code-header">
+        <h3>{{ qrCode.name }}</h3>
+        <span class="badge" [class.badge-active]="qrCode.isActive">
+          {{ qrCode.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </div>
+
+      <div class="qr-code-image">
+        <img [src]="getQRCodeUrl(qrCode)" [alt]="qrCode.name + ' QR Code'" />
+      </div>
+
+      <div class="qr-code-info">
+        <div class="info-item">
+          <span class="label">Token:</span>
+          <span class="value token-value">{{ qrCode.token }}</span>
+          <button class="btn-copy" (click)="copyToken(qrCode.token)">Copy</button>
+        </div>
+        <div class="info-item">
+          <span class="label">Scans:</span>
+          <span class="value">{{ qrCode.scanCount }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Created:</span>
+          <span class="value">{{ qrCode.createdAt | date:'short' }}</span>
+        </div>
+      </div>
+
+      <div class="qr-code-rules">
+        <h4>Rules</h4>
+        <ul>
+          <li *ngIf="qrCode.rules.anyoneCanViewGallery">✓ View Gallery</li>
+          <li *ngIf="qrCode.rules.anyoneCanUpload">✓ Can Upload</li>
+          <li *ngIf="qrCode.rules.uploadRequiresApproval">✓ Requires Approval</li>
+          <li *ngIf="qrCode.rules.downloadAllowed">✓ Download Allowed</li>
+        </ul>
+      </div>
+
+      <div class="qr-code-actions">
+        <button class="btn-download" (click)="downloadQRCode(qrCode)">Download QR</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,72 @@
+<div class="gallery-container">
+  <div *ngIf="isLoading" class="loading">
+    <p>Loading gallery...</p>
+  </div>
+
+  <div *ngIf="!isLoading && displayMedia.length === 0" class="empty-state">
+    <p>No media available yet.</p>
+  </div>
+
+  <div *ngIf="!isLoading && displayMedia.length > 0" class="gallery-grid">
+    <div
+      *ngFor="let item of displayMedia"
+      class="gallery-item"
+      (click)="openMedia(item)"
+    >
+      <div class="media-thumbnail">
+        <img
+          *ngIf="item.fileType === 'image'"
+          [src]="item.fileUrl"
+          [alt]="item.fileName"
+          loading="lazy"
+        />
+        <video
+          *ngIf="item.fileType === 'video'"
+          [src]="item.fileUrl"
+          preload="metadata"
+        ></video>
+        <div class="media-overlay">
+          <div class="media-info">
+            <span class="media-type">{{ item.fileType }}</span>
+            <button
+              *ngIf="allowDownload"
+              class="btn-download"
+              (click)="downloadMedia(item); $event.stopPropagation()"
+            >
+              Download
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Media Modal -->
+  <div *ngIf="selectedMedia" class="media-modal" (click)="closeMedia()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeMedia()">&times;</button>
+      <img
+        *ngIf="selectedMedia.fileType === 'image'"
+        [src]="selectedMedia.fileUrl"
+        [alt]="selectedMedia.fileName"
+      />
+      <video
+        *ngIf="selectedMedia.fileType === 'video'"
+        [src]="selectedMedia.fileUrl"
+        controls
+        autoplay
+      ></video>
+      <div class="modal-info">
+        <p><strong>Uploaded by:</strong> {{ selectedMedia.uploadedBy || 'Anonymous' }}</p>
+        <p><strong>Date:</strong> {{ selectedMedia.uploadedAt | date:'medium' }}</p>
+        <button
+          *ngIf="allowDownload"
+          class="btn-download"
+          (click)="downloadMedia(selectedMedia)"
+        >
+          Download
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

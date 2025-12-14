@@ -1,0 +1,49 @@
+<app-layout>
+  <div class="user-management-container">
+    <h1>User Management</h1>
+
+    <div *ngIf="isLoading" class="loading">Loading users...</div>
+
+    <div *ngIf="!isLoading" class="users-table-container">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>{{ user.email }}</td>
+            <td>{{ user.displayName || 'N/A' }}</td>
+            <td>
+              <span class="badge badge-{{ user.role }}">
+                {{ getRoleDisplayName(user.role) }}
+              </span>
+            </td>
+            <td>
+              <span class="badge" [class.badge-active]="user.isActive" [class.badge-inactive]="!user.isActive">
+                {{ user.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td>{{ user.createdAt | date:'short' }}</td>
+            <td>
+              <button
+                class="btn-toggle"
+                [class.btn-disable]="user.isActive"
+                [class.btn-enable]="!user.isActive"
+                (click)="toggleUserStatus(user)"
+              >
+                {{ user.isActive ? 'Disable' : 'Enable' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</app-layout>

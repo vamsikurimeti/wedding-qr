@@ -1,0 +1,55 @@
+<div class="guest-container">
+  <div *ngIf="isLoading" class="loading">
+    <p>Loading...</p>
+  </div>
+
+  <div *ngIf="errorMessage && !isLoading" class="error-state">
+    <h2>Error</h2>
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <div *ngIf="qrCode && rules && !isLoading" class="guest-content">
+    <div class="guest-header">
+      <h1>{{ qrCode.name }}</h1>
+      <p *ngIf="qrCode.eventId">Event QR Code</p>
+    </div>
+
+    <!-- Navigation Tabs (only show if both views are available) -->
+    <div *ngIf="activeView === 'both'" class="view-tabs">
+      <button
+        class="tab-button"
+        [class.active]="currentTab === 'gallery'"
+        (click)="switchToGallery()"
+      >
+        Gallery
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="currentTab === 'upload'"
+        (click)="switchToUpload()"
+      >
+        Upload
+      </button>
+    </div>
+
+    <!-- Gallery View -->
+    <div *ngIf="activeView === 'gallery' || (activeView === 'both' && currentTab === 'gallery')">
+      <app-gallery
+        [media]="[]"
+        [allowDownload]="rules.downloadAllowed"
+        [qrCodeId]="qrCode.id"
+        [token]="token"
+      ></app-gallery>
+    </div>
+
+    <!-- Upload View -->
+    <div *ngIf="activeView === 'upload' || (activeView === 'both' && currentTab === 'upload')">
+      <app-media-upload
+        [qrCode]="qrCode"
+        [rules]="rules"
+        [token]="token"
+        (uploadComplete)="switchToGallery()"
+      ></app-media-upload>
+    </div>
+  </div>
+</div>

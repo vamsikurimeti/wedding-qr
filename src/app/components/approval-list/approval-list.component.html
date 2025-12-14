@@ -1,0 +1,53 @@
+<div class="approval-list-container">
+  <div *ngIf="pendingMedia.length === 0" class="empty-state">
+    <p>No pending approvals. All media has been reviewed!</p>
+  </div>
+
+  <div *ngIf="pendingMedia.length > 0" class="media-list">
+    <div *ngFor="let media of pendingMedia" class="media-item">
+      <div class="media-preview">
+        <img
+          *ngIf="media.fileType === 'image'"
+          [src]="media.fileUrl"
+          [alt]="media.fileName"
+        />
+        <video
+          *ngIf="media.fileType === 'video'"
+          [src]="media.fileUrl"
+          preload="metadata"
+        ></video>
+      </div>
+
+      <div class="media-details">
+        <h3>{{ media.fileName }}</h3>
+        <div class="media-info">
+          <div class="info-row">
+            <span class="label">Type:</span>
+            <span class="value">{{ media.fileType }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Size:</span>
+            <span class="value">{{ formatFileSize(media.fileSize) }}</span>
+          </div>
+          <div class="info-row" *ngIf="media.uploadedBy">
+            <span class="label">Uploaded by:</span>
+            <span class="value">{{ media.uploadedBy }}</span>
+          </div>
+          <div class="info-row" *ngIf="media.uploadedByPhone">
+            <span class="label">Phone:</span>
+            <span class="value">{{ media.uploadedByPhone }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Uploaded:</span>
+            <span class="value">{{ media.uploadedAt | date:'medium' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="media-actions">
+        <button class="btn-approve" (click)="approve(media.id)">Approve</button>
+        <button class="btn-reject" (click)="reject(media.id)">Reject</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,184 @@
+<app-layout>
+  <div class="dashboard-container">
+    <!-- Create Event Form -->
+    <div *ngIf="isCreateMode" class="create-event-form">
+      <div class="form-header">
+        <h1>Create New Event</h1>
+        <button class="btn-secondary" (click)="router.navigate(['/events'])">Cancel</button>
+      </div>
+
+      <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="event-form">
+        <div class="form-group">
+          <label for="name">Event Name *</label>
+          <input
+            type="text"
+            id="name"
+            formControlName="name"
+            placeholder="Enter event name"
+            [class.error]="eventForm.get('name')?.invalid && eventForm.get('name')?.touched"
+          />
+          <span class="error-message" *ngIf="eventForm.get('name')?.invalid && eventForm.get('name')?.touched">
+            Event name is required
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            formControlName="description"
+            placeholder="Enter event description"
+            rows="4"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="pricingPlanId">Pricing Plan *</label>
+          <select
+            id="pricingPlanId"
+            formControlName="pricingPlanId"
+            [class.error]="eventForm.get('pricingPlanId')?.invalid && eventForm.get('pricingPlanId')?.touched"
+          >
+            <option value="">Select a pricing plan</option>
+            <option *ngFor="let plan of pricingPlans" [value]="plan.id">
+              {{ plan.name }} - {{ plan.storageLimit }}GB - ${{ plan.price }}/month
+            </option>
+          </select>
+          <span class="error-message" *ngIf="eventForm.get('pricingPlanId')?.invalid && eventForm.get('pricingPlanId')?.touched">
+            Please select a pricing plan
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="expiresAt">Expiry Date (Optional)</label>
+          <input
+            type="datetime-local"
+            id="expiresAt"
+            formControlName="expiresAt"
+          />
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="eventForm.invalid || isSubmitting"
+          >
+            <span *ngIf="!isSubmitting">Create Event</span>
+            <span *ngIf="isSubmitting">Creating...</span>
+          </button>
+          <button
+            type="button"
+            class="btn-secondary"
+            (click)="router.navigate(['/events'])"
+            [disabled]="isSubmitting"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Event Dashboard (View Mode) -->
+    <div *ngIf="!isCreateMode">
+      <div class="dashboard-header">
+        <h1>{{ event?.name || 'Event Dashboard' }}</h1>
+        <button class="btn-primary" (click)="router.navigate(['/events', eventId, 'qr', 'create'])">
+          Create QR Code
+        </button>
+      </div>
+
+      <div *ngIf="isLoading" class="loading">Loading event...</div>
+
+      <div *ngIf="!isLoading && event" class="event-content">
+      <div class="tabs">
+        <button
+          class="tab-button"
+          [class.active]="activeTab === 'details'"
+          (click)="setActiveTab('details')"
+        >
+          Details
+        </button>
+        <button
+          class="tab-button"
+          [class.active]="activeTab === 'qr'"
+          (click)="setActiveTab('qr')"
+        >
+          QR Codes
+        </button>
+        <button
+          class="tab-button"
+          [class.active]="activeTab === 'gallery'"
+          (click)="setActiveTab('gallery')"
+        >
+          Gallery
+        </button>
+        <button
+          class="tab-button"
+          [class.active]="activeTab === 'approvals'"
+          (click)="setActiveTab('approvals')"
+        >
+          Approvals ({{ pendingApprovals.length }})
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <!-- Details Tab -->
+        <div *ngIf="activeTab === 'details'" class="details-section">
+          <div class="info-card">
+            <h3>Event Information</h3>
+            <div class="info-item">
+              <span class="label">Name:</span>
+              <span class="value">{{ event.name }}</span>
+            </div>
+            <div class="info-item" *ngIf="event.description">
+              <span class="label">Description:</span>
+              <span class="value">{{ event.description }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Storage Used:</span>
+              <span class="value">{{ event.storageUsed.toFixed(2) }} GB</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Status:</span>
+              <span class="badge" [class.badge-active]="event.isActive">
+                {{ event.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="label">Created:</span>
+              <span class="value">{{ event.createdAt | date:'medium' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- QR Codes Tab -->
+        <div *ngIf="activeTab === 'qr'" class="qr-section">
+          <app-qr-list
+            [qrCodes]="qrCodes"
+            [eventId]="eventId"
+            (qrDeleted)="loadQRCodes()"
+          ></app-qr-list>
+        </div>
+
+        <!-- Gallery Tab -->
+        <div *ngIf="activeTab === 'gallery'" class="gallery-section">
+          <app-gallery
+            [media]="media"
+            [allowDownload]="true"
+          ></app-gallery>
+        </div>
+
+        <!-- Approvals Tab -->
+        <div *ngIf="activeTab === 'approvals'" class="approvals-section">
+          <app-approval-list
+            [pendingMedia]="pendingApprovals"
+            (approved)="approveMedia($event)"
+            (rejected)="rejectMedia($event)"
+          ></app-approval-list>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</app-layout>
